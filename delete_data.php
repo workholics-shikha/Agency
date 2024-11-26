@@ -24,4 +24,21 @@ if (isset($_GET['id'])) {
     echo "No ID provided";
 }
 
-$conn->close();
+// =============== For bulk delete
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ids'])) {
+    $ids    = $_POST['ids']; // Array of IDs
+    $idList = implode(',', array_map('intval', $ids)); // Sanitize IDs
+
+    // Perform delete operation
+    $query  = "DELETE FROM maintable WHERE id IN ($idList)";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        echo json_encode(['message' => 'Selected rows deleted successfully!']);
+    } else {
+        echo json_encode(['message' => 'Failed to delete selected rows.']);
+    }
+} else {
+    echo json_encode(['message' => 'Invalid request.']);
+}

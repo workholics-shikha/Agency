@@ -332,8 +332,6 @@ if (isset($_POST['downloadpdf2'])) {
   $pdf->Output();
 }
 
-
-
 if (isset($_POST['downloadpdf1'])) {
 
   include_once("include/function.php");
@@ -733,9 +731,7 @@ mpdf-->
 <td width='15%'>Caption</td>
 
 <td width='1
-
-        
-
+ 
 </thead>
 
 <tbody>
@@ -780,7 +776,6 @@ mpdf-->
 
 ";
 
-
   $mpdf = new mPDF();
 
   $mpdf->WriteHTML($html);
@@ -790,17 +785,16 @@ mpdf-->
   $mpdf->Output();
 }
 
-
-
 ?>
-
-
 
 <?php include_once("include/header.php");
 
 global $prbsl;
 
 ?>
+
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script> -->
 
 <script>
   $(function() {
@@ -812,10 +806,6 @@ global $prbsl;
 
   });
 </script>
-
-<?php // include_once("include/side_menu.php");
-?>
-
 
 <div class="content-wrapper">
 
@@ -845,8 +835,6 @@ global $prbsl;
 
             Export Data
 
-            <!--     <a class="pull-right" href="entryform.php">Add Report</i></a> -->
-
           </div>
 
           <!-- /.panel-heading -->
@@ -854,12 +842,6 @@ global $prbsl;
           <div class="panel-body">
 
             <?php
-
-            /*if(!$error && $msg !=''){
-
-                            echo '<div class="alert alert-success">'.$msg.'</div>';
-
-                          }*/
 
             if ($error && $msg != '') {
 
@@ -908,19 +890,24 @@ global $prbsl;
 
                     <label>Theater</label>
 
-                    <select name="theater" class="form-control" id="theater">
-
+                    <!-- <select name="theater" class="form-control" id="theater">
                       <option value="">Select Theater</option>
-
                       <option value="Cinepolis">Cinepolis</option>
-
                       <option value="FUN Cinemas">FUN Cinemas</option>
+                    </select> -->
 
+                    <select class="form-control" id="theater" name="t_id" required>
+                      <option value="">Select Theater Name</option>
+                      <?php $sql1 = "select * from `theater` order by `id` desc";
+
+                      $row1 = $prbsl->get_results($sql1);
+                      foreach ($row1 as $row) {
+                      ?>
+                        <option value="<?php echo $row->thcode; ?>"><?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?></option>
+                      <?php } ?>
                     </select>
 
                   </div>
-
-                  <div class="col-md-1"></div>
 
                   <div class="col-md-3">
 
@@ -944,6 +931,10 @@ global $prbsl;
 
                   </div>
 
+                  <div class="col-md-1">
+                    <input type="button" value="Bulk Delete" class="btn btn-danger" id="bulkDeleteButton" style="display:none;">
+                  </div>
+
                 </div>
 
               </form>
@@ -952,38 +943,44 @@ global $prbsl;
 
             <!-- ====Table==== -->
 
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+            <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+            <!-- <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"> -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+            <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+            <style>
+              .paginate_button next,
+              #dataTable_next {
+                display: none;
+              }
+
+              .toBeHidden {
+                display: none;
+              }
+            </style>
+
             <!-- /.row -->
             <section class="content" style="display:none;" id="filterTable">
               <div class="row">
                 <div class="col-md-12">
                   <div id="responseMessage"> </div>
                   <div class="panel panel-default">
-                    <!-- <button onclick="exportTableToExcel()">Export to Excel</button> -->
-                    <div class="panel-heading"> Report Data <a class="pull-right" target="_blank" href="bulk-entry.php">Add Report</i> </a> </div>
-                    <!-- /.panel-heading -->
+
+                    <!-- <div class="panel-heading"> Report Data <a class="pull-right" target="_blank" href="bulk-entry.php">Add Report</i> </a> </div> -->
+                    <div class="panel-heading"> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addReportModal">
+                      Add Report
+                    </button></div>
+
                     <div class="box-body">
 
                       <div class="table-responsive">
 
                         <form id="editForm">
-                          <table class="table table-bordered" id="dataTable">
-                            <tr>
-                              <th>No</th>
-                              <th>Theater Name</th>
-                              <th>Thcode</th>
-                              <th>Ads Name</th>
-                              <th>Airdate</th>
-                              <th>Start Time</th>
-                              <th>End Time</th>
-                              <th>Region</th>
-                              <th>District</th>
-                              <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody id="dataTableTbody">
-                            </tbody>
+                          <table class="table table-bordered" id="dataTable"> </table>
 
-                          </table>
                           <button type="submit" class="btn btn-success">Save Changes</button>
                         </form>
                       </div>
@@ -998,8 +995,6 @@ global $prbsl;
               </div>
             </section>
             <!-- /.row -->
-
-            <!-- ====Table==== -->
 
           </div>
 
@@ -1021,146 +1016,175 @@ global $prbsl;
 
 </div>
 
-<!-- /#page-wrapper -->
-
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
- <!-- Include the necessary libraries -->
- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-  
- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
- 
-<script type="module">
-  
-  $(document).ready(function() {
-
-    // Trigger the filter when the button is clicked
-    $("#filterButton").click(function() {
-      var start_date = $("#start_date").val();
-      var end_date = $("#end_date").val();
-      var theater = document.getElementById("theater").value;
-      var a_id = document.getElementById("a_id").value;
-
-      // Make an AJAX request to fetch filtered data
-      $.ajax({
-        url: 'filter_data.php',
-        type: 'GET',
-        data: {
-          start_date: start_date,
-          end_date: end_date,
-          theater: theater,
-          a_id:a_id
-        },
-        success: function(response) {
-          // Update the table with the new filtered data
-          $('#filterTable').css('display', 'block');
-          $("#dataTableTbody").html(response);
-        }
-      });
-    });
-
-    $("#editForm").on("submit", function(event) {
-      event.preventDefault(); // Prevent default form submission
-
-      $.ajax({
-        url: "save_bulk_edit.php",
-        type: "POST",
-        data: $(this).serialize(),
-        success: function(response) {
-
-          $("#responseMessage").html('<p class="alert alert-success">Records updated successfully!</p>');
-          $("#filterButton").click();
-
-          // Remove the message after 3 seconds (3000 ms)
-          setTimeout(function() {
-            $("#responseMessage").fadeOut("slow", function() {
-              $(this).html("").show(); // Clear and reset for future messages
-            });
-          }, 3000);
-
-        },
-        error: function() {
-          $("#responseMessage").html("<span style='color:red;'>Failed to save the record.</span>");
-        }
-      });
-    });
-
-  });
-</script>
+<script src="<?= admin_url() ?>js/myJsFile.js"></script> <!-- / Shikha's JS file -->
 
 <script>
-  
-// Export to CSV
-function exportTableToCSV() {
-    var table = document.getElementById("dataTable");
-    var rows = table.rows;
-    var csv = [];
+  // function myFunction() {
 
-    // Loop through each row
-    for (var i = 0; i < rows.length; i++) {
-        var row = rows[i];
-        var cols = row.cells;
-        var rowData = [];
+  //   ExcelPackage excel = new ExcelPackage();
 
-        // Loop through each column
-        for (var j = 0; j < cols.length; j++) {
-            rowData.push(cols[j].innerText);
-        }
+  //   var file = get_file();
 
-        csv.push(rowData.join(","));
-    }
+  //   //long code which writes the content of file to excel taking time
 
-    // Download CSV file
-    var csvContent = csv.join("\n");
-    var hiddenElement = document.createElement('a');
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
-    hiddenElement.target = '_blank';
-    hiddenElement.download = 'table_data.csv';
-    hiddenElement.click();
-}
+  //   using(var memoryStream = new MemoryStream())
 
-// Export to Excel
-function exportTableToExcel() {
-    var table = document.getElementById("dataTable");
+  //   {
 
-    // Convert the table to a worksheet
-    var wb = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-    
-    // Export the table to an Excel file
-    XLSX.writeFile(wb, 'table_data.xlsx');
-}
- 
+  //     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+  //     Response.AddHeader("content-disposition", "attachment;  filename=file.xlsx");
+
+  //     excel.SaveAs(memoryStream);
+
+  //     memoryStream.WriteTo(Response.OutputStream);
+
+  //     Response.Flush();
+
+  //     Response.End();
+
+  //   }
+
+  // }
 </script>
- 
 
-<script>
-  function myFunction()
+<!-- Add report Modal  -->
 
-  {
+<!-- Button to Trigger Modal -->
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
 
-    ExcelPackage excel = new ExcelPackage();
 
-    var file = get_file();
+<!-- Modal Structure -->
+<div class="modal fade" id="addReportModal" tabindex="-1" role="dialog" aria-labelledby="addReportModalLabel" aria-hidden="true" style="background: #0000002e !important;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="addReportModalLabel">Add Report</h4>
+      </div>
+      <div class="modal-body">
+        <!-- Form Content -->
+        <form method="post" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>From Date:</label>
+                <input type="text" name="fromDate" placeholder="From Date" class="form-control datepicker" id="datepicker" autocomplete="off" readonly required>
+              </div>
+             
+              <div class="form-group">
+                <label>Ads Name (Ro No.)</label>
+                <select class="form-control" name="a_id" required id="a_id">
+                  <option value="">Select Ad and Ro No</option>
+                  <!-- Dynamic Options -->
+                  <?php $sql1 = "select * from `ad` WHERE status='1' order by `id` ASC";
+                        $rows1 = $prbsl->get_results($sql1); foreach ($rows1 as $rows): ?>
+                    <option value="<?php //echo $rows->id; ?>">
+                      <?php echo $rows->clientname . " " . $rows->title . " ( " . $rows->rono . " )"; ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Theater Name:</label>
+                <select class="form-control" id="t_id" name="t_id" required>
+                  <option value="">Select Theater Name</option>
+                  <!-- Dynamic Options -->
+                  <?php $sql2 = "select * from `theater` order by `id` desc";
+                        $row2 = $prbsl->get_results($sql2); foreach ($row2 as $row): ?>
+                    <option value="<?php  echo $row->thcode; ?>">
+                      <?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
 
-    //long code which writes the content of file to excel taking time
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Language:</label>
+                <select class="form-control" id="language" name="language" required>
+                  <option value="">Select Language</option>
+                  <option value="Hindi">Hindi</option>
+                      <option value="English">English</option>
+                      <option value="Punjabi">Punjabi</option>
+                      <option value="Bengali">Bengali</option>
+                      <option value="Gujrati">Gujrati</option>
+                      <option value="Marathi">Marathi</option>
+                      <option value="Telgu">Telgu</option>
+                      <option value="Tamil">Tamil</option>
+                      <option value="Assamese">Assamese</option>
+                      <option value="Kannada">Kannada</option>
+                      <option value="Malyalam">Malyalam</option>
+                  <!-- Other options -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Caption:</label>
+                <input type="text" class="form-control" value="" name="title" required>
+              </div>
+              <div class="form-group">
+                <label>Start Time (15:20:30)<?= date("H:i:s") ?> </label>
+                <input type="text" class="form-control" name="starttime" value="" placeholder="H:M:S">
+              </div>
+              <div class="form-group">
+                <label>Show Type:</label>
+                <select class="form-control" name="showtype" required>
+                <option value="">Select Showtype </option>
+                      <option value="PST_1">PST_1</option>
+                      <option value="PST_2">PST_2</option>
+                      <option value="NPST_1">NPST_1</option>
+                      <option value="NPST_2">NPST_2</option>
+                  <!-- Other options -->
+                </select>
+              </div>
 
-    using(var memoryStream = new MemoryStream())
+              <div class="form-group">
+                <label> Show (select number of show of the day)</label>
+                <select class="form-control" name="show1" required>
+                <option value=""> Select Show </option>
+                      <option value="PST_1">PST_1</option>
+                      <option value="PST_2">PST_2</option>
+                      <option value="NPST_1">NPST_1</option>
+                      <option value="NPST_2">NPST_2</option>
+                  <!-- Other options -->
+                </select>
+              </div>
 
-    {
+              <div class="form-group">
+                <label> Showing</label>
+                <select class="form-control" name="showing" required>
+                <option value=""> Select Showing </option>
+                <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                  <!-- Other options -->
+                </select>
+              </div>
 
-      Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+              <div class="form-group">
+                <label>Movie Time:</label>
+                <input type="text" class="form-control" name="movietime" value="" placeholder="H:M:S">
+              </div>
+            </div>
+          </div>
 
-      Response.AddHeader("content-disposition", "attachment;  filename=file.xlsx");
+          <div class="text-center">
+            <input type="hidden" value="entry" name="action">
+            <button type="submit" name="save" class="btn btn-primary">Save</button>
+            <button type="reset" name="reset" class="btn btn-default">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-      excel.SaveAs(memoryStream);
+<!-- Add report Modal End -->
 
-      memoryStream.WriteTo(Response.OutputStream);
-
-      Response.Flush();
-
-      Response.End();
-
-    }
-  }
-</script>
 <?php include_once("include/footer.php"); ?>

@@ -210,7 +210,7 @@ $emsg = '';
                       $row1 = $prbsl->get_results($sql1);
                       foreach ($row1 as $row) {
                       ?>
-                        <option value="<?php echo $row->id; ?>"><?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?></option>
+                        <option value="<?php echo $row->thcode; ?>"><?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?></option>
                       <?php } ?>
                     </select>
                   </div>

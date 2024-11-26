@@ -1,14 +1,13 @@
 <?php       
 session_start();
 include('include/function.php');
-if(!isset($_SESSION['adminId'])){
-    //header("Location:".admin_url()."login.php");
+if(!isset($_SESSION['adminId'])){ 
 	header("Location:".admin_url()."login.php");
 }
 
 $userrole =  $_SESSION['cur_user'];
 $curFileName = currentFileName();
-$adminId = $_SESSION['adminId'];
+$adminId     = $_SESSION['adminId'];
 global $prbsl;
 //$curFileName="";
 
@@ -18,7 +17,6 @@ if(!empty($permissions))
 {
   $userPermissions = unserialize($permissions);
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -45,14 +43,18 @@ if(!empty($permissions))
   <link rel="stylesheet" href="<?=admin_url()?>css/_all-skins.min.css">
   <link rel="stylesheet" href="<?=admin_url()?>css/blue.css">
   <link rel="stylesheet" href="<?=admin_url()?>css/bootstrap-datetimepicker.min.css">
-
   
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-  <script src="<?=admin_url()?>js/jquery.min.js"></script> 
-  <script src="https://cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
-  
+  <!-- <script src="<?=admin_url()?>js/jquery.min.js"></script> // old link (26-11-2024)  -->
+ 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> <!--updated link -->
 
+  <script src="https://cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
+ 
+<!-- Latest compiled and minified JavaScript -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+   
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">

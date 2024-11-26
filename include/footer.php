@@ -3,22 +3,15 @@
   <strong>Copyright &copy; 2019 <a href="<?= site_url() ?>">Agency</a>.</strong> All Rights Reserved</footer>
 </div>
 <!-- ./wrapper --> 
-<script src="<?=admin_url()?>js/jquery.min.js"></script> 
-<!-- <script src="http://localhost/agency/ckeditor/ckeditor.js"></script> -->
+<!-- <script src="<?=admin_url()?>js/jquery.min.js"></script>   -->
 <script src="<?=admin_url()?>js/jquery.validate.min.js"></script>
 <script src="<?=admin_url()?>js/custom.js"></script>
 <script src="https://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
-<script src="<?=admin_url()?>js/bootstrap.min.js"></script> 
+ <!-- <script src="<?=admin_url()?>js/bootstrap.min.js"></script>   -->
+ 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<!--
-<script src="<?=admin_url()?>js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript">
-    
-        $("#startdate").datetimepicker();
-    
-</script>
--->
+ 
 <script src="<?=admin_url()?>js/app.min.js"></script> 
 <style>
 	.error {

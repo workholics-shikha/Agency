@@ -7,7 +7,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Loop through the posted data and update rows
+// Loop through the posted data and update rows  
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($_POST['theater_name'] as $id => $theater_name) {
         $thcode = $_POST['thcode'][$id];
