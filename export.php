@@ -971,8 +971,8 @@ global $prbsl;
 
                     <!-- <div class="panel-heading"> Report Data <a class="pull-right" target="_blank" href="bulk-entry.php">Add Report</i> </a> </div> -->
                     <div class="panel-heading"> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addReportModal">
-                      Add Report
-                    </button></div>
+                        Add Report
+                      </button></div>
 
                     <div class="box-body">
 
@@ -1050,13 +1050,9 @@ global $prbsl;
 
 <!-- Add report Modal  -->
 
-<!-- Button to Trigger Modal -->
-<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
-
-
 <!-- Modal Structure -->
-<div class="modal fade" id="addReportModal" tabindex="-1" role="dialog" aria-labelledby="addReportModalLabel" aria-hidden="true" style="background: #0000002e !important;">
+<div class="modal fade" id="addReportModal" tabindex="-1" role="dialog" aria-labelledby="addReportModalLabel" aria-hidden="true"
+  style="background: #0000002e!important;">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -1067,106 +1063,148 @@ global $prbsl;
       </div>
       <div class="modal-body">
         <!-- Form Content -->
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="addExportForm">
+
           <div class="row">
+            <!-- From Date and To Date -->
             <div class="col-md-6">
               <div class="form-group">
                 <label>From Date:</label>
                 <input type="text" name="fromDate" placeholder="From Date" class="form-control datepicker" id="datepicker" autocomplete="off" readonly required>
               </div>
-             
+            </div>
+            <div class="col-md-6">
               <div class="form-group">
-                <label>Ads Name (Ro No.)</label>
+                <label>To Date:</label>
+                <input type="text" name="toDate" placeholder="End Date" class="form-control datepicker" id="toDate" autocomplete="off" readonly required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Ads Name -->
+            <div class="col-md-12">
+              <div class="form-group">
+                <label>Ads Name (Ro No.):</label>
                 <select class="form-control" name="a_id" required id="a_id">
                   <option value="">Select Ad and Ro No</option>
-                  <!-- Dynamic Options -->
-                  <?php $sql1 = "select * from `ad` WHERE status='1' order by `id` ASC";
-                        $rows1 = $prbsl->get_results($sql1); foreach ($rows1 as $rows): ?>
-                    <option value="<?php //echo $rows->id; ?>">
+                  <?php
+                  $sql1 = "select * from `ad` WHERE status='1' order by `id` ASC";
+                  $rows1 = $prbsl->get_results($sql1);
+                  foreach ($rows1 as $rows): ?>
+                    <option value="<?php echo $rows->id; ?>">
                       <?php echo $rows->clientname . " " . $rows->title . " ( " . $rows->rono . " )"; ?>
                     </option>
                   <?php endforeach; ?>
                 </select>
               </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Theater Name -->
+            <div class="col-md-12">
               <div class="form-group">
                 <label>Theater Name:</label>
                 <select class="form-control" id="t_id" name="t_id" required>
                   <option value="">Select Theater Name</option>
-                  <!-- Dynamic Options -->
-                  <?php $sql2 = "select * from `theater` order by `id` desc";
-                        $row2 = $prbsl->get_results($sql2); foreach ($row2 as $row): ?>
-                    <option value="<?php  echo $row->thcode; ?>">
+                  <?php
+                  $sql2 = "select * from `theater` order by `id` desc";
+                  $row2 = $prbsl->get_results($sql2);
+                  foreach ($row2 as $row): ?>
+                    <option value="<?php echo $row->thcode; ?>">
                       <?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?>
                     </option>
                   <?php endforeach; ?>
                 </select>
               </div>
             </div>
+          </div>
 
+          <div class="row">
+            <!-- Language and Caption -->
             <div class="col-md-6">
               <div class="form-group">
                 <label>Language:</label>
                 <select class="form-control" id="language" name="language" required>
                   <option value="">Select Language</option>
                   <option value="Hindi">Hindi</option>
-                      <option value="English">English</option>
-                      <option value="Punjabi">Punjabi</option>
-                      <option value="Bengali">Bengali</option>
-                      <option value="Gujrati">Gujrati</option>
-                      <option value="Marathi">Marathi</option>
-                      <option value="Telgu">Telgu</option>
-                      <option value="Tamil">Tamil</option>
-                      <option value="Assamese">Assamese</option>
-                      <option value="Kannada">Kannada</option>
-                      <option value="Malyalam">Malyalam</option>
-                  <!-- Other options -->
+                  <option value="English">English</option>
+                  <option value="Punjabi">Punjabi</option>
+                  <option value="Bengali">Bengali</option>
+                  <option value="Gujrati">Gujrati</option>
+                  <option value="Marathi">Marathi</option>
+                  <option value="Telgu">Telgu</option>
+                  <option value="Tamil">Tamil</option>
+                  <option value="Assamese">Assamese</option>
+                  <option value="Kannada">Kannada</option>
+                  <option value="Malyalam">Malyalam</option>
                 </select>
               </div>
+            </div>
+            <div class="col-md-6">
               <div class="form-group">
                 <label>Caption:</label>
                 <input type="text" class="form-control" value="" name="title" required>
               </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Start Time, Show Type, and Movie Time -->
+            <div class="col-md-6">
               <div class="form-group">
-                <label>Start Time (15:20:30)<?= date("H:i:s") ?> </label>
+                <label>Start Time (15:20:30):</label>
                 <input type="text" class="form-control" name="starttime" value="" placeholder="H:M:S">
               </div>
+            </div>
+            <div class="col-md-6">
               <div class="form-group">
                 <label>Show Type:</label>
                 <select class="form-control" name="showtype" required>
-                <option value="">Select Showtype </option>
-                      <option value="PST_1">PST_1</option>
-                      <option value="PST_2">PST_2</option>
-                      <option value="NPST_1">NPST_1</option>
-                      <option value="NPST_2">NPST_2</option>
-                  <!-- Other options -->
+                  <option value="">Select Showtype</option>
+                  <option value="PST_1">PST_1</option>
+                  <option value="PST_2">PST_2</option>
+                  <option value="NPST_1">NPST_1</option>
+                  <option value="NPST_2">NPST_2</option>
                 </select>
               </div>
+            </div>
+          </div>
 
+          <div class="row">
+            <!-- Show and Showing -->
+            <div class="col-md-6">
               <div class="form-group">
-                <label> Show (select number of show of the day)</label>
+                <label>Show (Select number of shows):</label>
                 <select class="form-control" name="show1" required>
-                <option value=""> Select Show </option>
-                      <option value="PST_1">PST_1</option>
-                      <option value="PST_2">PST_2</option>
-                      <option value="NPST_1">NPST_1</option>
-                      <option value="NPST_2">NPST_2</option>
-                  <!-- Other options -->
+                  <option value="">Select Show </option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
                 </select>
               </div>
-
+            </div>
+            <div class="col-md-6">
               <div class="form-group">
-                <label> Showing</label>
+                <label>Showing:</label>
                 <select class="form-control" name="showing" required>
-                <option value=""> Select Showing </option>
-                <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                  <!-- Other options -->
+                  <option value="">Select Showing</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
                 </select>
               </div>
+            </div>
+          </div>
 
+          <div class="row">
+            <!-- Movie Time -->
+            <div class="col-md-6">
               <div class="form-group">
                 <label>Movie Time:</label>
                 <input type="text" class="form-control" name="movietime" value="" placeholder="H:M:S">
@@ -1176,8 +1214,8 @@ global $prbsl;
 
           <div class="text-center">
             <input type="hidden" value="entry" name="action">
-            <button type="submit" name="save" class="btn btn-primary">Save</button>
-            <button type="reset" name="reset" class="btn btn-default">Reset</button>
+            <button type="button" name="save" class="btn btn-primary" id="addExportFormBtn">Save</button>
+            <button type="reset" name="reset" class="btn btn-default" id="resetBtn">Reset</button>
           </div>
         </form>
       </div>
@@ -1186,5 +1224,102 @@ global $prbsl;
 </div>
 
 <!-- Add report Modal End -->
+
+<!-- Edit report Modal  -->
+
+<div class="modal fade" id="editReportModal" tabindex="-1" role="dialog" aria-labelledby="editReportModalLabel" aria-hidden="true" style="background: #0000002e !important;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="editReportModalLabel"> Edit Report</h4>
+      </div>
+      <div class="modal-body" id="editModalBody">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit report Modal End -->
+
+<script>
+  // Use event delegation to handle dynamically generated buttons
+  $(document).on("click", ".editModalBody", function() {
+    var id = $(this).data("id"); // Get the ID from the button's data-id attribute
+    // console.log("helllo" + id);
+    $("#editReportModal").modal("show");
+
+    $.ajax({
+      url: "edit_data_report_modal.php",
+      type: "GET",
+      data: {
+        id: id
+      },
+      success: function(response) {
+        
+        $("#editModalBody").html(response); // Update modal with the response
+      },
+      error: function(xhr, status, error) {
+        console.error("AJAX Error: " + status + ": " + error);
+      },
+
+    });
+  });
+
+  $(document).on("click", "#submitExportFormBtn", function (event) {
+  event.preventDefault(); // Prevent default form submission
+
+  // Get the form ID from the button's custom attribute
+  var getFormId = $(this).attr("form-id");
+ 
+  // Use string concatenation or template literals to construct the selector
+  var selectedOption = $(`#theaterId${getFormId} option:selected`);
+
+  // Get the value of the custom attribute 'optVal'
+  var optValValue = selectedOption.attr("optVal");
+ 
+  var formData = $("#editExportForm").serialize();
+
+    // Additional data to send
+  var thCode   = $(`#theaterId${getFormId}`).val(); // Replace with actual value
+     
+     
+    // Append extra data
+    // formData += "&thcode=" + encodeURIComponent(thCode);
+    formData += "&theater_name=" + encodeURIComponent(optValValue);
+        
+    $.ajax({
+      url: "save_data_edit.php",
+      type: "POST",
+      data: formData ,
+      success: function (response) {
+        $("#responseMessage").html(
+          '<p class="alert alert-success">Record updated successfully!</p>'
+        );
+        $("#filterButton").click();
+
+        // Close the modal with jQuery
+        $("#editReportModal").modal("hide");
+        // $("#resetBtn").click();
+
+        // Remove the message after 3 seconds (3000 ms)
+        setTimeout(function () {
+          $("#responseMessage").fadeOut("slow", function () {
+            $(this).html("").show(); // Clear and reset for future messages
+          });
+        }, 3000);
+      },
+      error: function () {
+        $("#responseMessage").html(
+          "<span style='color:red;'>Failed to save the record.</span>"
+        );
+      },
+    }); 
+  });
+
+</script>
 
 <?php include_once("include/footer.php"); ?>
