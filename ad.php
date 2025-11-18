@@ -37,8 +37,6 @@ $emsg = '';
         <div class="col-md-12">
            
                 <?php
-
-        $clients =$prbsl->get_results("SELECT * FROM userdetail where role='client' ORDER BY `id` ASC");
                // `title`,'".$_REQUEST['title']."'
 				if(isset($_REQUEST['action']) && $_REQUEST['action']=='log'){
 					$periodfrom = date("Y-m-d", strtotime($_POST['periodfrom']));
@@ -46,11 +44,8 @@ $emsg = '';
 					$date = date("Y-m-d", strtotime($_POST['date']));
          
 				
-					$client_id=$_POST['client_id'];
-          $client = $prbsl->get_row("SELECT * FROM `userdetail` WHERE `role`='client' AND `id`='$client_id'");
-
-          $clientname = $client['name'];
-          $family=$_POST['family'];
+					$clientname=$_POST['clientname'];
+					$family=$_POST['family'];
 					$rono=$_POST['rono'];
           $caption=$_POST['title'];
 					$invoiceno=$_POST['invoiceno'];
@@ -59,28 +54,25 @@ $emsg = '';
 					$langauge=$_POST['langauge'];
 					$spot=$_POST['spot'];
 					$status=$_POST['status'];
-
-
-          
 					$sql = $prbsl->insert("ad",
-              array(
-                /*'service'=>$service,
-                'url'=>$url,*/
-                'clientname'=>$clientname,
-                'family'=>$family,
-                'rono'=>$rono,
-                'title'=>$caption,
-                'invoiceno'=>$invoiceno,
-                'agencyname'=>$agencyname,
-                'duration'=>$duration,
-                'langauge'=>$langauge,
-                'spot'=>$spot,
-                'status'=>$status,
-                'periodfrom'=>$periodfrom,
-                'periodto '=>$periodto,
-                'date'=>$date,
-                /*'note'=>$note*/
-              )
+      array(
+        /*'service'=>$service,
+        'url'=>$url,*/
+        'clientname'=>$clientname,
+        'family'=>$family,
+        'rono'=>$rono,
+        'title'=>$caption,
+        'invoiceno'=>$invoiceno,
+        'agencyname'=>$agencyname,
+        'duration'=>$duration,
+        'langauge'=>$langauge,
+        'spot'=>$spot,
+        'status'=>$status,
+        'periodfrom'=>$periodfrom,
+        'periodto '=>$periodto,
+        'date'=>$date,
+        /*'note'=>$note*/
+      )
     );
 					if($sql==true){
 	                echo '<p class="alert alert-success">"Ad and RO Detail successfully submitted "</p>';
@@ -101,14 +93,7 @@ $emsg = '';
                             <div class="col-md-10">
                               <div class="form-group">
                                   <label>Client Name</label>
-                                  <select class="form-control" name="client_id" required>
-                                     <option value="">Select Client</option>
-                                     <?php if(!empty($clients)): ?>
-                                        <?php foreach($clients as $client): ?>
-                                          <option value="<?php echo $client->id; ?>"><?php echo $client->name; ?></option>
-                                        <?php endforeach; ?>  
-                                     <?php endif; ?>  
-                                  </select>
+                                  <input type="text" class="form-control" placeholder="" name="clientname" required>
                               </div>
 							  <div class="form-group">
                                   <label>Campaign Name</label>

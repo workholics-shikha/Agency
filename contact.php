@@ -11,19 +11,6 @@
     
     $result=$prbsl->get_results("SELECT * FROM contactdetail ORDER BY `id` DESC");
     //debug($result);
-
-    $adminId = $_SESSION['adminId'];
-    $permissions = $prbsl->get_var("SELECT permissions FROM userdetail WHERE id='$adminId'");
-    $userPermissions = array();
-    if(!empty($permissions))
-    {
-    $userPermissions = unserialize($permissions);
-    }
- 
-    if(!array_key_exists("contact",$userPermissions))
-    {
-        echo '<script>window.location.href="'.admin_url().'index.php";</script>';
-    }
 ?>
 
    

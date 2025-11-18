@@ -5,13 +5,9 @@ if(!isset($_SESSION['adminId'])){
 	echo "<script>location.href='login.php'</script>";
 }
 
-$userrole =  $_SESSION['cur_user'];
 $curFileName = currentFileName();
-$adminId = $_SESSION['adminId'];
 global $prbsl;
 //$curFileName="";
-
-
 
 ?>
 <!DOCTYPE html>

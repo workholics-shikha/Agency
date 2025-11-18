@@ -10,42 +10,29 @@
         }
     }
 ?>
-
+<?php include_once("include/side_menu.php");?>
    
-            <div class="content-wrapper">
-            
-               <section class="content-header">
-                    <h1 class="content-header">Users</h1>
-                </section>
-                <!-- /.col-lg-12 -->
-            
-            <!-- /.row -->
-             <section class="content">
+            <div id="page-wrapper">
             <div class="row">
-                <div class="col-md-12">
-                    
-                  <div class="box">    
-
-            <div class="box-header with-border">
-
-              <h3 class="box-title">
-
-                
- <a class="pull-right" href="userdetail.php">Add user</i>
-                            
-</a>     
-                  
-
-              </h3>
-
+                <div class="col-lg-12">
+                    <h1 class="page-header">Users</h1>
+                </div>
+                <!-- /.col-lg-12 -->
             </div>
-               
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            user Data 
+                            <?php if(!checkPermission('view_users') || checkPermission('manage_users')){?>
+                            <a class="pull-right" href="userdetail.php">Add user</i>
+                            <?php }?>
+</a>          </div>
                         <!-- /.panel-heading -->
-                         <div class="box-body">
-
-            <div class="table-responsive">
-
-        <table class="table table-bordered">
+                        <div class="panel-body">
+                           <div class="dataTable_wrapper">
+                                <table width="100%" class="table table-striped table-bordered table-hover text-center" id="dataTables-example">
                                  <thead>
                                     <tr >
                                         <th>#</th>
@@ -53,9 +40,9 @@
                                         <!-- <th>Service</th>
                                         <th>Web Site</th> -->
                                         <th>Password</th>
-                                        
+                                        <?php if(checkPermission('manage_users')){?>
                                         <th>Action</th>
-                                        
+                                        <?php }?>
                                     </tr>
                                 </thead>   
                                 <tbody>
@@ -72,12 +59,12 @@
                                         <td><?=$aboutdata->name?></td>
                                         
                                         <td><?=$aboutdata->password?></td>
-                                        
+                                        <?php if(checkPermission('manage_users')){?>
                                         <td>
                                         <a href="user_form.php?id=<?=$aboutdata->id?>" class="btn btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> | 
                                             <a href="user.php?id=<?=$aboutdata->id?>" class="btn btn-danger"><i class="fa fa-remove" aria-hidden="true"></i></a>
                                         </td>
-                                        
+                                        <?php }?>
                                     </tr>
 
                                 <?php  $i++;} } ?>
@@ -88,16 +75,15 @@
                             
                         </div>
                         <!-- /.panel-body -->
-                   
                     </div>
                     <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
-          </section>
+         
         </div>
         <!-- /#page-wrapper -->
 
  
-<?php include_once("include/footer.php");?>
+<?=include_once("include/footer.php");?>

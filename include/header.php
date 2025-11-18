@@ -1,22 +1,14 @@
 <?php       
 session_start();
 include('include/function.php');
-if(!isset($_SESSION['adminId'])){ 
+if(!isset($_SESSION['adminId'])){
+    //header("Location:".admin_url()."login.php");
 	header("Location:".admin_url()."login.php");
 }
 
-$userrole =  $_SESSION['cur_user'];
 $curFileName = currentFileName();
-$adminId     = $_SESSION['adminId'];
 global $prbsl;
 //$curFileName="";
-
-$permissions = $prbsl->get_var("SELECT permissions FROM userdetail WHERE id='$adminId'");
-$userPermissions = array();
-if(!empty($permissions))
-{
-  $userPermissions = unserialize($permissions);
-}
 
 ?>
 <!DOCTYPE html>
@@ -43,18 +35,14 @@ if(!empty($permissions))
   <link rel="stylesheet" href="<?=admin_url()?>css/_all-skins.min.css">
   <link rel="stylesheet" href="<?=admin_url()?>css/blue.css">
   <link rel="stylesheet" href="<?=admin_url()?>css/bootstrap-datetimepicker.min.css">
+
   
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-  <!-- <script src="<?=admin_url()?>js/jquery.min.js"></script> // old link (26-11-2024)  -->
- 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> <!--updated link -->
-
+  <script src="<?=admin_url()?>js/jquery.min.js"></script> 
   <script src="https://cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
- 
-<!-- Latest compiled and minified JavaScript -->
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-   
+  
+
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -140,106 +128,65 @@ if(!empty($permissions))
                      <span>Users</span> 
                   </a>
                 </li>-->
-         <?php 
-             if(array_key_exists("users",$userPermissions))
-             {
-         ?>     <li class="<?=($curFileName == 'user.php')?'active':''?>">
-				        	<a href="<?=admin_url()?>user.php">
-                    <i class="fa fa-user"></i>
-                      <span>Users</span> 
-                    </a>
+                <li class="<?=($curFileName == 'user.php')?'active':''?>">
+					<a href="<?=admin_url()?>user.php">
+                  <i class="fa fa-user"></i>
+                     <span>Users</span> 
+                  </a>
                 </li>
-          <?php } ?>      
-    <?php 
-        if(array_key_exists("ads",$userPermissions))
-        {
-    ?>         
 				  <li class="<?=($curFileName == 'allad.php')?'active':''?>">
 					<a href="<?=admin_url()?>allad.php">
                   <i class="fa fa-picture-o"></i>
                      <span>Ads</span> 
                   </a>
                 </li>
-    <?php } ?>    
-    <?php 
-        if(array_key_exists("theater",$userPermissions))
-        {
-    ?>           
 				<li class="<?=($curFileName == 'alltheater.php')?'active':''?>">
 					<a href="<?=admin_url()?>alltheater.php">
                   <i class="fa fa-home"></i>
                      <span>Theater</span> 
                   </a>
                 </li>
-     <?php } ?>           
                 
-     <?php 
-        if(array_key_exists("report",$userPermissions))
-        {
-    ?>             
+                
 				<li class="<?=($curFileName == 'view_report.php')?'active':''?>">
 					<a href="<?=admin_url()?>view_report.php">
                   <i class="fa fa-home"></i>
                      <span>Report</span> 
                   </a>
                 </li>
-    <?php } ?>  
-    <?php 
-        if(array_key_exists("bulk_entry",$userPermissions))
-        {
-    ?>              
 		<li class="<?=($curFileName == 'bulk-entry.php')?'active':''?>">
 					<a href="<?=admin_url()?>bulk-entry.php">
                   <i class="fa fa-smile-o"></i>
                      <span>Bulk Entry</span> 
                   </a>
                 </li>
-     <?php } ?>    
-     <?php 
-        if(array_key_exists("contact",$userPermissions))
-        {
-    ?>         
                 <li class="<?=($curFileName == 'contact.php')?'active':''?>">
 					<a href="<?=admin_url()?>contact.php">
                   <i class="fa fa-phone"></i>
                      <span>Contact</span> 
                   </a>
                 </li>
-      <?php } ?>    
-      <?php 
-        if(array_key_exists("export_data",$userPermissions))
-        {
-    ?>         
-		        	<li class="<?=($curFileName == 'export.php')?'active':''?>">
-                <a href="<?=admin_url()?>export.php">
-                  <i class="fa fa-picture-o"></i>
+			<li class="<?=($curFileName == 'export.php')?'active':''?>">
+					<a href="<?=admin_url()?>export.php">
+						<i class="fa fa-picture-o"></i>
                      <span>Export Data
-                     </span> 
+               </span> 
                   </a>
                 </li>
-				<?php } ?>
-        <?php 
-        if(array_key_exists("group",$userPermissions))
-        {
-    ?>    
+				
 				<li class="<?=($curFileName == 'groups.php')?'active':''?>">
 					<a href="<?=admin_url()?>groups.php">
                   <i class="fa fa-smile-o"></i>
                      <span>Group</span> 
                   </a>
                 </li>
-       <?php } ?>         
-       <?php 
-            if(array_key_exists("download",$userPermissions))
-            {
-        ?>            
+                
                 		<li class="<?=($curFileName == 'download_log.php')?'active':''?>">
 					<a href="<?=admin_url()?>download_log.php">
                   <i class="fa fa-download"></i>
                      <span>Download</span> 
                   </a>
                 </li>
-        <?php } ?>        
                 
                
 				<li>

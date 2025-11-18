@@ -1,23 +1,12 @@
-<?php include_once("include/header.php");
-
-$adminId = $_SESSION['adminId'];
-$permissions = $prbsl->get_var("SELECT permissions FROM userdetail WHERE id='$adminId'");
-$userPermissions = array();
-if (!empty($permissions)) {
-  $userPermissions = unserialize($permissions);
-}
-
-if (!array_key_exists("export_data", $userPermissions)) {
-  echo '<script>window.location.href="' . admin_url() . 'index.php";</script>';
-}
-
-
+<?php
+ob_start();
 $error = false;
 $msg = '';
 $condtion = "";
 
-
 if (isset($_POST['submit'])) {
+
+
 
   include_once('db.php');
 
@@ -73,25 +62,15 @@ if (isset($_POST['submit'])) {
     $userId = 0;
 
     $array = array('type' => "filedownload", 'startdate' => $startdate, 'enddate' => $enddate, "datetime" => date("Y-m-d H:i:s"), 'ip_address' => $_SERVER['REMOTE_ADDR'], 'user' => $userId);
-
-
-
+ 
     $prbsl->insert("reprot_download_log", $array);
   }
-
-
-
-
-
-
-
+ 
   if (isset($userId)) {
 
     $condtion .= " and user='" . $userId . "'";
   }
-
-
-
+ 
   $contents = '';
 
   $contents .= '<?xml version="1.0"?>';
@@ -146,11 +125,11 @@ if (isset($_POST['submit'])) {
 
     $msg = "\t\t\t Data not found";
   }
-
+ 
   $contents .= "</davplogs>";
 
   $contents .= "</xml>";
-
+ 
   echo $contents;
 
   die;
@@ -169,6 +148,8 @@ if (isset($_POST['downloadxls']) && $_POST['downloadxls'] != '') {
   $startdate = $_POST['startdate'];
 
   $enddate = $_POST['enddate'];
+
+
 
   if (!empty($startdate) and !empty($enddate)) {
 
@@ -248,11 +229,16 @@ if (isset($_POST['downloadxls']) && $_POST['downloadxls'] != '') {
 
   $sql = "SELECT * FROM `maintable` WHERE $condtion ORDER BY id ASC LIMIT 100000";
 
+
+  // die();
+
   $getdata = $prbsl->get_results($sql);
 
   if (!empty($getdata)) {
 
     foreach ($getdata as $value) {
+
+
 
       $contents .= $value->theater_name . "\t" . $value->region . "\t" . $value->district . "\t" . $value->seating . "\t" . $value->thcode . "\t" . date("d-m-Y", strtotime($value->airdate)) . "\t" . $value->starttime . "\t" . $value->endtime . "\t" . $value->showtype . "\t" . $value->show1 . "\t" . $value->showing . "\t" . $value->duration . "\t" . $value->caption . "\t" . $value->language . "\n";
       // echo $contents;
@@ -282,10 +268,7 @@ if (isset($_POST['downloadpdf2'])) {
 
 
   global $prbsl;
-
-
-
-
+  
   require('fpdf/fpdf.php');
 
   $pdf = new FPDF();
@@ -296,6 +279,8 @@ if (isset($_POST['downloadpdf2'])) {
 
   $pdf->Ln();
 
+
+
   $pdf->SetFont('times', 'B', 10);
 
   $pdf->Cell(25, 7, "Stud ID");
@@ -304,13 +289,17 @@ if (isset($_POST['downloadpdf2'])) {
 
   $pdf->Cell(40, 7, "Address");
 
-  $pdf->Ln();
+
 
   $pdf->Ln();
-
+ 
+  $pdf->Ln();
+ 
   $sql = "SELECT * FROM ad WHERE `id`='" . $_POST['a_id'] . "'";
 
   $result = $prbsl->get_results($sql);
+
+
 
   foreach ($result as $rows) {
 
@@ -320,23 +309,43 @@ if (isset($_POST['downloadpdf2'])) {
 
     $address = $rows->family;
 
+
+
     $pdf->Cell(25, 7, $studid);
 
     $pdf->Cell(30, 7, $name);
 
     $pdf->Cell(40, 7, $address);
 
+
+
     $pdf->Ln();
   }
+
+  //header('Content-type: application/text');
+
+  //header('Content-Disposition: attachment; filename="file.pdf"');
+
+
 
   $pdf->Output();
 }
 
+
+
 if (isset($_POST['downloadpdf1'])) {
+
+
 
   include_once("include/function.php");
 
+
+
+
+
   global $prbsl;
+
+
 
   $startdate = $_POST['startdate'];
 
@@ -350,6 +359,8 @@ if (isset($_POST['downloadpdf1'])) {
 
     $condtion .= "(airdate between '" . $startdate . "' and '" . $enddate . "') and ";
   }
+
+
 
   if (!empty($_POST['theater'])) {
 
@@ -471,27 +482,49 @@ if (isset($_POST['downloadpdf1'])) {
   die;
 }
 
+
+
 if (isset($_POST['downloadpdf'])) {
 
+
+
   include_once("include/function.php");
+
+
+
+
 
   global $prbsl;
 
   include('MPDF57/mpdf.php');
 
+
+
+
+
   $startdate = $_POST['startdate'];
 
   $enddate = $_POST['enddate'];
 
+
+
   if (!empty($startdate) and !empty($enddate)) {
+
+
 
     $condtion .= "(airdate between '" . $startdate . "' and '" . $enddate . "') and ";
   }
 
+
+
   if (!empty($_POST['theater'])) {
+
+
 
     $condtion .= "(theater_name like '%" . $_POST['theater'] . "%') and ";
   }
+
+
 
   $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "'");
 
@@ -550,15 +583,35 @@ if (isset($_POST['downloadpdf'])) {
   }
 
 
+
+
+
   if (isset($userId)) {
+
+
 
     $condtion .= "  and user='" . $userId . "'";
   }
 
 
+
+
+
+
+
   $sql        = "SELECT * FROM `maintable` WHERE $condtion ";
 
   $getdata   = $prbsl->get_results($sql);
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -731,7 +784,9 @@ mpdf-->
 <td width='15%'>Caption</td>
 
 <td width='1
- 
+
+        
+
 </thead>
 
 <tbody>
@@ -776,25 +831,34 @@ mpdf-->
 
 ";
 
+
+
+
+
+
+
   $mpdf = new mPDF();
 
   $mpdf->WriteHTML($html);
 
   $mpdf->SetDisplayMode('fullpage');
 
+
+
   $mpdf->Output();
 }
 
+
+
 ?>
+
+
 
 <?php include_once("include/header.php");
 
 global $prbsl;
 
 ?>
-
-<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script> -->
 
 <script>
   $(function() {
@@ -806,6 +870,8 @@ global $prbsl;
 
   });
 </script>
+
+<?php // include_once("include/side_menu.php"); ?>
 
 <div class="content-wrapper">
 
@@ -835,6 +901,8 @@ global $prbsl;
 
             Export Data
 
+            <!--     <a class="pull-right" href="entryform.php">Add Report</i></a> -->
+
           </div>
 
           <!-- /.panel-heading -->
@@ -842,6 +910,12 @@ global $prbsl;
           <div class="panel-body">
 
             <?php
+
+            /*if(!$error && $msg !=''){
+
+                            echo '<div class="alert alert-success">'.$msg.'</div>';
+
+                          }*/
 
             if ($error && $msg != '') {
 
@@ -860,25 +934,19 @@ global $prbsl;
 
                     <label>Ro No.</label>
 
-                    <select class="form-control" name="a_id" required id="a_id">
+                    <select class="form-control" name="a_id" required>
 
-                      <?php
-                      // $sql2 = $prbsl->get_results("select * from `ad` order by `id` desc");
-                      $sql2 = $prbsl->get_results("select * from `ad` WHERE status='1' order by `id` ASC");
+                      <?php $sql2 = $prbsl->get_results("select * from `ad` order by `id` desc");
 
-                      echo '<option value="">Select Ro No.</option>';
+
 
                       foreach ($sql2 as $rows) {
 
                       ?>
 
                         <option value="<?php echo $rows->id; ?>" <?php if (isset($entrydata['caption']) && $entrydata['caption'] == $row['title']) {
-                                                                    echo "selected";
-                                                                  } ?>>
-                          <?php // echo $rows->title . " ( " . $rows->rono . " )"; 
-                          ?>
-                          <?php echo $rows->clientname . " " . $rows->title . " ( " . $rows->rono . " )"; ?>
-                        </option>
+                                                                  echo "selected";
+                                                                } ?>><?php echo $rows->title . " ( " . $rows->rono . " )"; ?></option>
 
                       <?php } ?>
 
@@ -890,49 +958,42 @@ global $prbsl;
 
                     <label>Theater</label>
 
-                    <!-- <select name="theater" class="form-control" id="theater">
+                    <select name="theater" class="form-control">
+
                       <option value="">Select Theater</option>
+
                       <option value="Cinepolis">Cinepolis</option>
+
                       <option value="FUN Cinemas">FUN Cinemas</option>
-                    </select> -->
 
-                    <select class="form-control" id="theater" name="t_id" required>
-                      <option value="">Select Theater Name</option>
-                      <?php $sql1 = "select * from `theater` order by `id` desc";
-
-                      $row1 = $prbsl->get_results($sql1);
-                      foreach ($row1 as $row) {
-                      ?>
-                        <option value="<?php echo $row->thcode; ?>"><?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?></option>
-                      <?php } ?>
                     </select>
 
                   </div>
 
+                  <div class="col-md-1"></div>
+
                   <div class="col-md-3">
 
-                    <input type="text" name="startdate" placeholder="Start Date" class="form-control datepicker" autocomplete="off" id="start_date">
+                    <input type="text" name="startdate" placeholder="Start Date" class="form-control datepicker" autocomplete="off">
 
                   </div>
 
                   <div class="col-md-3">
 
-                    <input type="text" name="enddate" placeholder="End Date" class="form-control datepicker" autocomplete="off" id="end_date">
+                    <input type="text" name="enddate" placeholder="End Date" class="form-control datepicker" autocomplete="off">
 
                   </div>
 
                   <div class="col-md-5">
 
-                    <input type="button" value="Show Data" class="btn btn-info" id="filterButton">
-
                     <input type="submit" name="submit" value="Download XML" class="btn btn-info" onclick="myFunction">
 
                     <input type="submit" name="downloadxls" value="Download XLS" class="btn btn-primary">
 
-                  </div>
 
-                  <div class="col-md-1">
-                    <input type="button" value="Bulk Delete" class="btn btn-danger" id="bulkDeleteButton" style="display:none;">
+
+                    <!--<input type="submit" name="downloadpdf" value="Download PDF" class="btn btn-primary">-->
+
                   </div>
 
                 </div>
@@ -941,60 +1002,7 @@ global $prbsl;
 
             </div>
 
-            <!-- ====Table==== -->
 
-            <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
-            <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-
-            <!-- <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"> -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-            <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-
-            <style>
-              .paginate_button next,
-              #dataTable_next {
-                display: none;
-              }
-
-              .toBeHidden {
-                display: none;
-              }
-            </style>
-
-            <!-- /.row -->
-            <section class="content" style="display:none;" id="filterTable">
-              <div class="row">
-                <div class="col-md-12">
-                  <div id="responseMessage"> </div>
-                  <div class="panel panel-default">
-
-                    <!-- <div class="panel-heading"> Report Data <a class="pull-right" target="_blank" href="bulk-entry.php">Add Report</i> </a> </div> -->
-                    <div class="panel-heading"> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addReportModal">
-                        Add Report
-                      </button></div>
-
-                    <div class="box-body">
-
-                      <div class="table-responsive">
-
-                        <form id="editForm">
-                          <table class="table table-bordered" id="dataTable"> </table>
-
-                          <button type="submit" class="btn btn-success">Save Changes</button>
-                        </form>
-                      </div>
-                      <!-- /.table-responsive -->
-
-                    </div>
-                    <!-- /.panel-body -->
-                  </div>
-                  <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-12 -->
-              </div>
-            </section>
-            <!-- /.row -->
 
           </div>
 
@@ -1014,312 +1022,42 @@ global $prbsl;
 
   <!-- /.row -->
 
+
+
 </div>
 
-<script src="<?= admin_url() ?>js/myJsFile.js"></script> <!-- / Shikha's JS file -->
+<!-- /#page-wrapper -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-  // function myFunction() {
+  function myFunction()
 
-  //   ExcelPackage excel = new ExcelPackage();
+  {
 
-  //   var file = get_file();
+    ExcelPackage excel = new ExcelPackage();
 
-  //   //long code which writes the content of file to excel taking time
+    var file = get_file();
 
-  //   using(var memoryStream = new MemoryStream())
+    //long code which writes the content of file to excel taking time
 
-  //   {
+    using(var memoryStream = new MemoryStream())
 
-  //     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    {
 
-  //     Response.AddHeader("content-disposition", "attachment;  filename=file.xlsx");
+      Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-  //     excel.SaveAs(memoryStream);
+      Response.AddHeader("content-disposition", "attachment;  filename=file.xlsx");
 
-  //     memoryStream.WriteTo(Response.OutputStream);
+      excel.SaveAs(memoryStream);
 
-  //     Response.Flush();
+      memoryStream.WriteTo(Response.OutputStream);
 
-  //     Response.End();
+      Response.Flush();
 
-  //   }
+      Response.End();
 
-  // }
+    }
+  }
 </script>
-
-<!-- Add report Modal  -->
-
-<!-- Modal Structure -->
-<div class="modal fade" id="addReportModal" tabindex="-1" role="dialog" aria-labelledby="addReportModalLabel" aria-hidden="true"
-  style="background: #0000002e!important;">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="addReportModalLabel">Add Report</h4>
-      </div>
-      <div class="modal-body">
-        <!-- Form Content -->
-        <form method="post" enctype="multipart/form-data" id="addExportForm">
-
-          <div class="row">
-            <!-- From Date and To Date -->
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>From Date:</label>
-                <input type="text" name="fromDate" placeholder="From Date" class="form-control datepicker" id="datepicker" autocomplete="off" readonly required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>To Date:</label>
-                <input type="text" name="toDate" placeholder="End Date" class="form-control datepicker" id="toDate" autocomplete="off" readonly required>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Ads Name -->
-            <div class="col-md-12">
-              <div class="form-group">
-                <label>Ads Name (Ro No.):</label>
-                <select class="form-control" name="a_id" required id="a_id">
-                  <option value="">Select Ad and Ro No</option>
-                  <?php
-                  $sql1 = "select * from `ad` WHERE status='1' order by `id` ASC";
-                  $rows1 = $prbsl->get_results($sql1);
-                  foreach ($rows1 as $rows): ?>
-                    <option value="<?php echo $rows->id; ?>">
-                      <?php echo $rows->clientname . " " . $rows->title . " ( " . $rows->rono . " )"; ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Theater Name -->
-            <div class="col-md-12">
-              <div class="form-group">
-                <label>Theater Name:</label>
-                <select class="form-control" id="t_id" name="t_id" required>
-                  <option value="">Select Theater Name</option>
-                  <?php
-                  $sql2 = "select * from `theater` order by `id` desc";
-                  $row2 = $prbsl->get_results($sql2);
-                  foreach ($row2 as $row): ?>
-                    <option value="<?php echo $row->thcode; ?>">
-                      <?php echo $row->company . " " . $row->district . " " . $row->name . " ( " . $row->thcode . " )"; ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Language and Caption -->
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Language:</label>
-                <select class="form-control" id="language" name="language" required>
-                  <option value="">Select Language</option>
-                  <option value="Hindi">Hindi</option>
-                  <option value="English">English</option>
-                  <option value="Punjabi">Punjabi</option>
-                  <option value="Bengali">Bengali</option>
-                  <option value="Gujrati">Gujrati</option>
-                  <option value="Marathi">Marathi</option>
-                  <option value="Telgu">Telgu</option>
-                  <option value="Tamil">Tamil</option>
-                  <option value="Assamese">Assamese</option>
-                  <option value="Kannada">Kannada</option>
-                  <option value="Malyalam">Malyalam</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Caption:</label>
-                <input type="text" class="form-control" value="" name="title" required>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Start Time, Show Type, and Movie Time -->
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Start Time (15:20:30):</label>
-                <input type="text" class="form-control" name="starttime" value="" placeholder="H:M:S">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Show Type:</label>
-                <select class="form-control" name="showtype" required>
-                  <option value="">Select Showtype</option>
-                  <option value="PST_1">PST_1</option>
-                  <option value="PST_2">PST_2</option>
-                  <option value="NPST_1">NPST_1</option>
-                  <option value="NPST_2">NPST_2</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Show and Showing -->
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Show (Select number of shows):</label>
-                <select class="form-control" name="show1" required>
-                  <option value="">Select Show </option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Showing:</label>
-                <select class="form-control" name="showing" required>
-                  <option value="">Select Showing</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Movie Time -->
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Movie Time:</label>
-                <input type="text" class="form-control" name="movietime" value="" placeholder="H:M:S">
-              </div>
-            </div>
-          </div>
-
-          <div class="text-center">
-            <input type="hidden" value="entry" name="action">
-            <button type="button" name="save" class="btn btn-primary" id="addExportFormBtn">Save</button>
-            <button type="reset" name="reset" class="btn btn-default" id="resetBtn">Reset</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Add report Modal End -->
-
-<!-- Edit report Modal  -->
-
-<div class="modal fade" id="editReportModal" tabindex="-1" role="dialog" aria-labelledby="editReportModalLabel" aria-hidden="true" style="background: #0000002e !important;">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="editReportModalLabel"> Edit Report</h4>
-      </div>
-      <div class="modal-body" id="editModalBody">
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Edit report Modal End -->
-
-<script>
-  // Use event delegation to handle dynamically generated buttons
-  $(document).on("click", ".editModalBody", function() {
-    var id = $(this).data("id"); // Get the ID from the button's data-id attribute
-    // console.log("helllo" + id);
-    $("#editReportModal").modal("show");
-
-    $.ajax({
-      url: "edit_data_report_modal.php",
-      type: "GET",
-      data: {
-        id: id
-      },
-      success: function(response) {
-        
-        $("#editModalBody").html(response); // Update modal with the response
-      },
-      error: function(xhr, status, error) {
-        console.error("AJAX Error: " + status + ": " + error);
-      },
-
-    });
-  });
-
-  $(document).on("click", "#submitExportFormBtn", function (event) {
-  event.preventDefault(); // Prevent default form submission
-
-  // Get the form ID from the button's custom attribute
-  var getFormId = $(this).attr("form-id");
- 
-  // Use string concatenation or template literals to construct the selector
-  var selectedOption = $(`#theaterId${getFormId} option:selected`);
-
-  // Get the value of the custom attribute 'optVal'
-  var optValValue = selectedOption.attr("optVal");
- 
-  var formData = $("#editExportForm").serialize();
-
-    // Additional data to send
-  var thCode   = $(`#theaterId${getFormId}`).val(); // Replace with actual value
-     
-     
-    // Append extra data
-    // formData += "&thcode=" + encodeURIComponent(thCode);
-    formData += "&theater_name=" + encodeURIComponent(optValValue);
-        
-    $.ajax({
-      url: "save_data_edit.php",
-      type: "POST",
-      data: formData ,
-      success: function (response) {
-        $("#responseMessage").html(
-          '<p class="alert alert-success">Record updated successfully!</p>'
-        );
-        $("#filterButton").click();
-
-        // Close the modal with jQuery
-        $("#editReportModal").modal("hide");
-        // $("#resetBtn").click();
-
-        // Remove the message after 3 seconds (3000 ms)
-        setTimeout(function () {
-          $("#responseMessage").fadeOut("slow", function () {
-            $(this).html("").show(); // Clear and reset for future messages
-          });
-        }, 3000);
-      },
-      error: function () {
-        $("#responseMessage").html(
-          "<span style='color:red;'>Failed to save the record.</span>"
-        );
-      },
-    }); 
-  });
-
-</script>
-
 <?php include_once("include/footer.php"); ?>

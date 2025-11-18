@@ -1,18 +1,5 @@
 <?php include_once("include/header.php");
     
-
-    $adminId = $_SESSION['adminId'];
-    $permissions = $prbsl->get_var("SELECT permissions FROM userdetail WHERE id='$adminId'");
-    $userPermissions = array();
-    if(!empty($permissions))
-    {
-    $userPermissions = unserialize($permissions);
-    }
- 
-    if(!array_key_exists("download",$userPermissions))
-    {
-        echo '<script>window.location.href="'.admin_url().'index.php";</script>';
-    }    
     if(isset($_GET['id'])){
         $id = $_GET['id'];
         if($prbsl->delete('reprot_download_log',array('id'=>$id))){

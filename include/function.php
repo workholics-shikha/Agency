@@ -2,7 +2,7 @@
 
 date_default_timezone_set('Asia/Kolkata');
 //header( 'Content-Type: text/html; charset=utf-8' );
-// include('config.php');
+include('config.php');
 include('queries.php');
 
 function generateRandomString($length = 10) {
@@ -17,15 +17,15 @@ function generateRandomString($length = 10) {
 function to_prety_url($str){
 	if($str !== mb_convert_encoding( mb_convert_encoding($str, 'UTF-32', 'UTF-8'), 'UTF-8', 'UTF-32') )
 		$str = mb_convert_encoding($str, 'UTF-8', mb_detect_encoding($str));
-		$str = htmlentities($str, ENT_NOQUOTES, 'UTF-8');
-		$str = preg_replace('`&([a-z]{1,2})(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig);`i', '\1', $str);
-		$str = html_entity_decode($str, ENT_NOQUOTES, 'UTF-8');
-		$str = preg_replace(array('`[^a-z0-9]`i','`[-]+`'), '-', $str);
-		$str = strtolower( trim($str, '-') );
+	$str = htmlentities($str, ENT_NOQUOTES, 'UTF-8');
+	$str = preg_replace('`&([a-z]{1,2})(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig);`i', '\1', $str);
+	$str = html_entity_decode($str, ENT_NOQUOTES, 'UTF-8');
+	$str = preg_replace(array('`[^a-z0-9]`i','`[-]+`'), '-', $str);
+	$str = strtolower( trim($str, '-') );
 	return $str;
 }
 function site_url(){
-	 
+	//return 'http://viraltrack.newstracklive.in';
 	return 'https://'.$_SERVER['HTTP_HOST'].'/';
 	
 }
@@ -167,7 +167,7 @@ function createThumbnail($filename) {
  
     imagejpeg($nm, $path_to_thumbs_directory . $filename);
     $tn = '<img src="' . $path_to_thumbs_directory . $filename . '" alt="image" />';
-    $tn .= '<br />Congratulations. Your file has been successfully uploaded, and a thumbnail has been created.';
+    $tn .= '<br />Congratulations. Your file has been successfully uploaded, and a      thumbnail has been created.';
     echo $tn;
 }
 
