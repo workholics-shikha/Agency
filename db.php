@@ -1,8 +1,13 @@
 <?php
 	$db_name = 'desiantiques_agency';
-	$username = 'desiantiques_agency';
-	$password = 'k&nU171j4';
+	// $username = 'desiantiques_agency';
+	// $password = 'k&nU171j4';
+
 	$servername = 'localhost';
+ 
+	$username = 'root';
+	$password = '';
+
 ini_set('mysql.connect_timeout', 30000);
 ini_set('default_socket_timeout', 30000); 
 

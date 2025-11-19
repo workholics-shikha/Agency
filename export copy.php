@@ -6,6 +6,8 @@ $condtion = "";
 
 if (isset($_POST['submit'])) {
 
+
+
   include_once('db.php');
 
   include_once("include/function.php");
@@ -17,29 +19,34 @@ if (isset($_POST['submit'])) {
   global $prbsl;
 
   $startdate = $_POST['startdate'];
+
   $enddate = $_POST['enddate'];
 
-  // DEFAULT DATE FILTER (Last 30 days)
-  if (empty($startdate)) {
-    $startdate = date("Y-m-d", strtotime("-90 days"));
-  }
 
-  if (empty($enddate)) {
-    $enddate = date("Y-m-d");
-  }
 
   if (!empty($startdate) and !empty($enddate)) {
+
     $condtion .= "(airdate between '" . $startdate . "' and '" . $enddate . "') and ";
   }
 
+
+
   if (!empty($_POST['theater'])) {
+
     $condtion .= "(theater_name like '%" . $_POST['theater'] . "%') and ";
   }
 
-  $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "' ORDER BY id ASC");
+
+
+  $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "'");
+
   $rono = $a2['rono'];
 
+
+
   $condtion .= " rono='" . $rono . "' and status='1'";
+
+
 
   if (isset($_SESSION["cur_user"])) {
 
@@ -55,29 +62,46 @@ if (isset($_POST['submit'])) {
     $userId = 0;
 
     $array = array('type' => "filedownload", 'startdate' => $startdate, 'enddate' => $enddate, "datetime" => date("Y-m-d H:i:s"), 'ip_address' => $_SERVER['REMOTE_ADDR'], 'user' => $userId);
-
+ 
     $prbsl->insert("reprot_download_log", $array);
   }
-
+ 
   if (isset($userId)) {
 
     $condtion .= " and user='" . $userId . "'";
   }
-
+ 
   $contents = '';
 
   $contents .= '<?xml version="1.0"?>';
 
   $contents .= '<davplogs>';
 
+  //print_r($prbsl);
+
   $sql2 = "SELECT thcode,airdate,starttime,showtype,show1,showing,duration FROM `maintable` WHERE $condtion ORDER BY id ASC LIMIT 50000";
+
+  // echo $sql2; die;
+
+  //   $getdata = $prbsl->get_results($sql2);
 
   $result = mysqli_query($conn, $sql2);
 
+  //print_r($result);
+
+  //die();
+  //print_r($result);die;
   if (mysqli_num_rows($result) > 0) {
 
+    //print_r($result);
+
+    //die();
+
     // output data of each row
+
     while ($value = mysqli_fetch_assoc($result)) {
+
+      //print_r($value);
 
       $contents .= '<logdata>';
 
@@ -101,47 +125,47 @@ if (isset($_POST['submit'])) {
 
     $msg = "\t\t\t Data not found";
   }
-
+ 
   $contents .= "</davplogs>";
 
+  $contents .= "</xml>";
+ 
   echo $contents;
 
   die;
 }
 
+
+
 if (isset($_POST['downloadxls']) && $_POST['downloadxls'] != '') {
 
+
+
   include_once("include/function.php");
-
-  // Increase limits for large file
-  ini_set('memory_limit', '1024M');
-  ini_set('max_execution_time', 600);
-
-  ob_clean();
 
   global $prbsl;
 
   $startdate = $_POST['startdate'];
+
   $enddate = $_POST['enddate'];
 
-  // DEFAULT DATE FILTER (Last 30 days)
-  if (empty($startdate)) {
-    $startdate = date("Y-m-d", strtotime("-30 days"));
-  }
 
-  if (empty($enddate)) {
-    $enddate = date("Y-m-d");
-  }
 
   if (!empty($startdate) and !empty($enddate)) {
+
     $condtion .= "(airdate between '" . $startdate . "' and '" . $enddate . "') and ";
   }
 
+
+
   if (!empty($_POST['theater'])) {
+
     $condtion .= "(theater_name like '%" . $_POST['theater'] . "%') and ";
   }
 
-  $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "' order by `id` asc");
+
+  $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "'");
+
   $rono = $a2['rono'];
 
   if ($a2['spot'] == 1) {
@@ -163,7 +187,201 @@ if (isset($_POST['downloadxls']) && $_POST['downloadxls'] != '') {
 
   if (isset($_SESSION["cur_user"])) {
 
+
+
     if (!isset($_SESSION)) {
+
+      session_start();
+    }
+
+    $email = $_SESSION['email'];
+
+
+
+    $sql = "SELECT id FROM `userdetail` WHERE `name`='$email'";
+
+    $userId = 0;
+
+    $array = array('type' => "filedownload", 'startdate' => $startdate, 'enddate' => $enddate, "datetime" => date("Y-m-d H:i:s"), 'ip_address' => $_SERVER['REMOTE_ADDR'], 'user' => $userId);
+
+    $prbsl->insert("reprot_download_log", $array);
+  }
+
+
+
+
+
+  if (isset($userId)) {
+
+    $condtion .= "  or user='" . $userId . "'";
+  }
+
+
+  $contents = "client Name \t Ro No \t Title \t Invoice No \t Date \t Period From \t Period To \t Agency Name \t Duration: \t Spot \n";
+
+  $contents .= $a2['clientname'] . "\t" . $a2["rono"] . "\t" . $a2["family"] . " " . " \t" . $a2["invoiceno"] . " \t" . date("d-m-Y", strtotime($a2["date"])) . " \t" . date("d-m-Y", strtotime($a2["periodfrom"])) . " \t" . date("d-m-Y", strtotime($a2["periodto"])) . "\t" . $a2["agencyname"] . " \t" . $a2["duration"] . " sec \t" . $spot . " \n \n";
+
+
+
+  $contents .= "\n Theater name\t Region\t District\t Seating\t Thcode\t Airdate \t Strat Time \t End Time \t Show Type \t Show1 \t Showing \t Duration \t Caption \t Language \n";
+
+
+
+  $sql = "SELECT * FROM `maintable` WHERE $condtion ORDER BY id ASC LIMIT 100000";
+
+
+  // die();
+
+  $getdata = $prbsl->get_results($sql);
+
+  if (!empty($getdata)) {
+
+    foreach ($getdata as $value) {
+
+
+
+      $contents .= $value->theater_name . "\t" . $value->region . "\t" . $value->district . "\t" . $value->seating . "\t" . $value->thcode . "\t" . date("d-m-Y", strtotime($value->airdate)) . "\t" . $value->starttime . "\t" . $value->endtime . "\t" . $value->showtype . "\t" . $value->show1 . "\t" . $value->showing . "\t" . $value->duration . "\t" . $value->caption . "\t" . $value->language . "\n";
+      // echo $contents;
+    }
+    //echo $contents;
+    //die();
+  } else {
+    $contents  .= "\t\t\t Data not found";
+  }
+  header('Content-type: "text/xml"; charset="utf8"');
+  header('Content-Disposition: attachment; filename="agency.xls"');
+ 
+  echo $contents;
+  die;
+}
+
+
+
+if (isset($_POST['downloadpdf2'])) {
+
+
+
+  include_once("include/function.php");
+
+
+
+
+
+  global $prbsl;
+  
+  require('fpdf/fpdf.php');
+
+  $pdf = new FPDF();
+
+  $pdf->AddPage();
+
+  $pdf->SetFont('Arial', 'B', 10);
+
+  $pdf->Ln();
+
+ 
+  $pdf->SetFont('times', 'B', 10);
+
+  $pdf->Cell(25, 7, "Stud ID");
+
+  $pdf->Cell(30, 7, "Student Name");
+
+  $pdf->Cell(40, 7, "Address");
+ 
+  $pdf->Ln();
+ 
+  $pdf->Ln();
+ 
+  $sql = "SELECT * FROM ad WHERE `id`='" . $_POST['a_id'] . "'";
+
+  $result = $prbsl->get_results($sql);
+ 
+  foreach ($result as $rows) {
+
+    $studid = $rows->clientname;
+
+    $name = $rows->rono;
+
+    $address = $rows->family;
+ 
+    $pdf->Cell(25, 7, $studid);
+
+    $pdf->Cell(30, 7, $name);
+
+    $pdf->Cell(40, 7, $address);
+ 
+    $pdf->Ln();
+  }
+  
+  $pdf->Output();
+}
+
+
+
+if (isset($_POST['downloadpdf1'])) {
+
+
+
+  include_once("include/function.php");
+
+
+
+
+
+  global $prbsl;
+
+
+
+  $startdate = $_POST['startdate'];
+
+  $enddate = $_POST['enddate'];
+
+
+
+  if (!empty($startdate) and !empty($enddate)) {
+
+
+
+    $condtion .= "(airdate between '" . $startdate . "' and '" . $enddate . "') and ";
+  }
+
+
+
+  if (!empty($_POST['theater'])) {
+
+
+
+    $condtion .= "(theater_name like '%" . $_POST['theater'] . "%') and ";
+  }
+
+
+
+  $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "'");
+
+  $rono = $a2['rono'];
+
+  if ($a2['spot'] == 1) {
+
+    $spot = "Preshow";
+  } else if ($a2['spot'] == 2) {
+
+    $spot = "Postshow";
+  } else if ($a2['spot'] == 3) {
+
+    $spot = "Interval";
+  } else {
+
+    $spot = "";
+  }
+
+  $condtion .= " rono='" . $rono . "' and status='1'";
+
+  if (isset($_SESSION["cur_user"])) {
+
+
+
+    if (!isset($_SESSION)) {
+
       session_start();
     }
 
@@ -178,109 +396,120 @@ if (isset($_POST['downloadxls']) && $_POST['downloadxls'] != '') {
     $prbsl->insert("reprot_download_log", $array);
   }
 
+
+
+
+
   if (isset($userId)) {
-    $condtion .= "  or user='" . $userId . "'";
+
+
+
+    $condtion .= "  and user='" . $userId . "'";
   }
+
+
+
+
 
   $contents = "client Name \t Ro No \t Title \t Invoice No \t Date \t Period From \t Period To \t Agency Name \t Duration: \t Spot \n";
 
-  $contents .= $a2['clientname'] . "\t" . $a2["rono"] . "\t" . $a2["family"] . " " . " \t" . $a2["invoiceno"] . " \t" . date("d-m-Y", strtotime($a2["date"])) . " \t" . date("d-m-Y", strtotime($a2["periodfrom"])) . " \t" . date("d-m-Y", strtotime($a2["periodto"])) . "\t" . $a2["agencyname"] . " \t" . $a2["duration"] . " sec \t" . $spot . " \n \n";
+
+
+  $contents .= $a2['clientname'] . "\t" . $a2["rono"] . "\t" . $a2["family"] . " " . " \t" . $a2["invoiceno"] . " \t" . date("m-d-Y", strtotime($a2["date"])) . " \t" . date("m-d-Y", strtotime($a2["periodfrom"])) . " \t" . date("m-d-Y", strtotime($a2["periodto"])) . "\t" . $a2["agencyname"] . " \t" . $a2["duration"] . " sec \t" . $spot . " \n \n";
+
+
 
   $contents .= "\n Theater name\t Region\t District\t Seating\t Thcode\t Airdate \t Strat Time \t End Time \t Show Type \t Show1 \t Showing \t Duration \t Caption \t Language \n";
 
-  $sql = "SELECT * FROM `maintable` WHERE $condtion ORDER BY id ASC LIMIT 100000";
+
+
+  $sql = "SELECT * FROM `maintable` WHERE $condtion ";
+
+
+
+
 
   $getdata = $prbsl->get_results($sql);
 
-  if (!empty($getdata)) {
+
+
+
+
+  if ($getdata) {
+
+
 
     foreach ($getdata as $value) {
 
-      $contents .= $value->theater_name . "\t" . $value->region . "\t" . $value->district . "\t" . $value->seating . "\t" . $value->thcode . "\t" . date("d-m-Y", strtotime($value->airdate)) . "\t" . $value->starttime . "\t" . $value->endtime . "\t" . $value->showtype . "\t" . $value->show1 . "\t" . $value->showing . "\t" . $value->duration . "\t" . $value->caption . "\t" . $value->language . "\n";
+
+
+      $contents .= $value->theater_name . "\t" . $value->region . "\t" . $value->district . "\t" . $value->seating . "\t" . $value->thcode . "\t" . date("m-d-Y", strtotime($value->airdate)) . "\t" . $value->starttime . "\t" . $value->endtime . "\t" . $value->showtype . "\t" . $value->show1 . "\t" . $value->showing . "\t" . $value->duration . "\t" . $value->caption . "\t" . $value->language . "\n";
     }
   } else {
+
+
+
     $contents  .= "\t\t\t Data not found";
   }
-  header('Content-type: "text/xml"; charset="utf8"');
-  header('Content-Disposition: attachment; filename="agency.xls"');
 
-  flush();    // sends output immediately
-  ob_flush(); // frees memory continuously
+
+
+
+
+  header('Content-type: "text/xml"; charset="utf8"');
+
+  header('Content-Disposition: attachment; filename="agency.pdf"');
+
+  //debug($contents);
 
   echo $contents;
+
   die;
 }
 
-if (isset($_POST['downloadpdf2'])) {
 
-  include_once("include/function.php");
-
-  global $prbsl;
-
-  require('fpdf/fpdf.php');
-
-  $pdf = new FPDF();
-
-  $pdf->AddPage();
-
-  $pdf->SetFont('Arial', 'B', 10);
-
-  $pdf->Ln();
-
-  $pdf->SetFont('times', 'B', 10);
-
-  $pdf->Cell(25, 7, "Stud ID");
-
-  $pdf->Cell(30, 7, "Student Name");
-
-  $pdf->Cell(40, 7, "Address");
-
-  $pdf->Ln();
-
-  $pdf->Ln();
-
-  $sql = "SELECT * FROM ad WHERE `id`='" . $_POST['a_id'] . "'";
-
-  $result = $prbsl->get_results($sql);
-
-  foreach ($result as $rows) {
-
-    $studid = $rows->clientname;
-
-    $name = $rows->rono;
-
-    $address = $rows->family;
-
-    $pdf->Cell(25, 7, $studid);
-
-    $pdf->Cell(30, 7, $name);
-
-    $pdf->Cell(40, 7, $address);
-
-    $pdf->Ln();
-  }
-
-  $pdf->Output();
-}
 
 if (isset($_POST['downloadpdf'])) {
 
+
+
   include_once("include/function.php");
+
+
+
+
 
   global $prbsl;
 
   include('MPDF57/mpdf.php');
 
+
+
+
+
   $startdate = $_POST['startdate'];
+
   $enddate = $_POST['enddate'];
 
+
+
   if (!empty($startdate) and !empty($enddate)) {
+
+
+
     $condtion .= "(airdate between '" . $startdate . "' and '" . $enddate . "') and ";
   }
 
+
+
   if (!empty($_POST['theater'])) {
+
+
+
     $condtion .= "(theater_name like '%" . $_POST['theater'] . "%') and ";
   }
+
+
 
   $a2 = $prbsl->get_row("select * from `ad` where `id`='" . $_POST['a_id'] . "'");
 
@@ -320,6 +549,8 @@ if (isset($_POST['downloadpdf'])) {
 
   if (isset($_SESSION["cur_user"])) {
 
+
+
     if (!isset($_SESSION)) {
 
       session_start();
@@ -335,16 +566,15 @@ if (isset($_POST['downloadpdf'])) {
 
     $prbsl->insert("reprot_download_log", $array);
   }
-
+ 
   if (isset($userId)) {
-
     $condtion .= "  and user='" . $userId . "'";
   }
+ 
+  $sql = "SELECT * FROM `maintable` WHERE $condtion ";
 
-  $sql       = "SELECT * FROM `maintable` WHERE $condtion ";
-
-  $getdata   = $prbsl->get_results($sql);
-
+  $getdata = $prbsl->get_results($sql);
+ 
   $html .= "
 
 <html>
@@ -390,13 +620,13 @@ td.lastrow {
 	border-right: 0.6mm solid #000000;
 
 }
-
+ 
 </style>
 
 </head>
 
 <body>
-
+  
 <div style='text-align:center;'>HTML Form to PDF - Blog.theonlytutorials.com</div><br>
 
 <table class='items' width='100%' style='font-size: 9pt; border-collapse: collapse;' cellpadding='8'>
@@ -489,6 +719,8 @@ td.lastrow {
 
 <td width='1
 
+        
+
 </thead>
 
 <tbody>
@@ -532,18 +764,18 @@ td.lastrow {
 </html>
 
 ";
-
+ 
   $mpdf = new mPDF();
 
   $mpdf->WriteHTML($html);
 
   $mpdf->SetDisplayMode('fullpage');
-
+ 
   $mpdf->Output();
 }
-
+ 
 ?>
-
+ 
 <?php include_once("include/header.php");
 
 global $prbsl;
@@ -561,7 +793,7 @@ global $prbsl;
   });
 </script>
 
-<?php include_once("include/side_menu.php"); ?>
+<?php // include_once("include/side_menu.php"); ?>
 
 <div class="content-wrapper">
 
@@ -590,17 +822,14 @@ global $prbsl;
           <div class="panel-heading">
 
             Export Data
-
+ 
           </div>
 
           <!-- /.panel-heading -->
 
           <div class="panel-body">
 
-            <?php
-
-            if ($error && $msg != '') {
-
+            <?php if ($error && $msg != '') {
               echo '<div class="alert alert-danger">' . $msg . '</div>';
             }
 
@@ -619,14 +848,10 @@ global $prbsl;
                     <select class="form-control" name="a_id" required>
 
                       <?php $sql2 = $prbsl->get_results("select * from `ad` order by `id` desc");
+ 
+                      foreach ($sql2 as $rows) { ?>
 
-                      foreach ($sql2 as $rows) {
-
-                      ?>
-
-                        <option value="<?php echo $rows->id; ?>" <?php if (isset($entrydata['caption']) && $entrydata['caption'] == $row['title']) {
-                                                                    echo "selected";
-                                                                  } ?>><?php echo $rows->title . " ( " . $rows->rono . " )"; ?></option>
+                        <option value="<?php echo $rows->id; ?>" <?php if (isset($entrydata['caption']) && $entrydata['caption'] == $row['title']) { echo "selected"; } ?>><?php echo $rows->title . " ( " . $rows->rono . " )"; ?></option>
 
                       <?php } ?>
 
@@ -667,16 +892,17 @@ global $prbsl;
                   <div class="col-md-5">
 
                     <input type="submit" name="submit" value="Download XML" class="btn btn-info" onclick="myFunction">
-                    <input type="submit" name="downloadxls" value="Download XLS" class="btn btn-primary">
 
+                    <input type="submit" name="downloadxls" value="Download XLS" class="btn btn-primary">
+ 
                   </div>
 
                 </div>
 
               </form>
 
-            </div>
-
+            </div> 
+ 
           </div>
 
           <!-- /.panel-body -->
@@ -694,7 +920,7 @@ global $prbsl;
   </section>
 
   <!-- /.row -->
-
+ 
 </div>
 
 <!-- /#page-wrapper -->
@@ -703,7 +929,6 @@ global $prbsl;
 
 <script>
   function myFunction()
-
   {
 
     ExcelPackage excel = new ExcelPackage();
@@ -711,7 +936,6 @@ global $prbsl;
     var file = get_file();
 
     //long code which writes the content of file to excel taking time
-
     using(var memoryStream = new MemoryStream())
 
     {
